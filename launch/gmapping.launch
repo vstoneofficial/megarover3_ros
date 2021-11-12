@@ -1,0 +1,90 @@
+<!--
+SLAM（gmapping）サンプルのlaunch
+
+実行にはLRFが必要です。
+地図を生成していくためにはメガローバーを手動で移動させる必要があります。
+ゲームパッド操作サンプルまたはマウス（タッチパッド）操作サンプルを使用してください。
+
+起動コマンド： roslaunch megarover3_ros gmapping.launch
+-->
+
+<launch>
+
+  <!-- 引数 -->
+  <arg name="rover_type"  default="mega3"  doc="mega3 / outdoor" />
+  <arg name="lrf"         default="urg"       doc="urg / tg30"/>
+
+  <!-- オドメトリの配信ノード -->
+  <node pkg="megarover3_ros" type="pub_odom" name="pub_odom" />
+
+  <!-- URG-04LX-UG01の場合 -->
+  <group if="$(eval lrf=='urg')">
+　　<!-- LRFのデバイスファイルパス -->
+　　<arg name="port_urg" default="/dev/ttyACM0" /> <!-- LRFのデバイスファイルパスを設定してください -->
+
+　　<!-- メガローバーの旋回中心からLRFまでの座標変換の設定 -->
+    <group if="$(eval rover_type=='mega3')">
+　　  <!-- メガローバーVer.3.0の場合 -->
+      <!-- argsの項でLRFの位置を調整できます。 args="x y z y p r" -->
+      <node pkg="tf" type="static_transform_publisher" name="stp_laser" args="0.1 0 0.08 0 0 3.14159 base_link lrf_link 1" />
+    </group>
+    <group if="$(eval rover_type=='outdoor')">
+      <!-- メガローバーVer.3.0屋外対応版の場合 -->
+      <node pkg="tf" type="static_transform_publisher" name="stp_laser" args="0.13 0 0.10 0 0 0 base_link lrf_link 1" />
+    </group>
+
+　　<!-- LRFのデバイスドライバノード -->
+　　<node pkg="urg_node" type="urg_node" name="urg_node">
+       <param name="serial_port" value="$(arg port_urg)" />
+       <param name="frame_id" value="lrf_link" />
+       <param name="angle_min" value="-1.57" /> <!-- 視野角の指定（最小値） -->
+       <param name="angle_max" value="1.57" />  <!-- 視野角の指定（最大値） -->
+　　</node>
+  </group>
+
+  <!-- YDLiDAR TG30の場合 -->
+  <group if="$(eval lrf=='tg30')">
+    <!-- メガローバーの旋回中心からLRFまでの座標変換の設定 -->
+    <group if="$(eval rover_type=='mega3')">
+　　  <!-- メガローバーVer3.0の場合 -->
+      <!-- argsの項でLRFの位置を調整できます。 args="x y z y p r" -->
+      <node pkg="tf" type="static_transform_publisher" name="stp_laser" args="0.12 0 0.08 0 0 0 base_link lrf_link 1" />
+    </group>
+    <group if="$(eval rover_type=='outdoor')">
+      <!-- メガローバーVer.3.0屋外対応版の場合 -->
+      <node pkg="tf" type="static_transform_publisher" name="stp_laser" args="0.15 0 0.10 0 0 0 base_link lrf_link 1" />
+    </group>
+
+    <!-- YDLiDARデバイスドライバノード-->
+    <node name="ydlidar_node"  pkg="ydlidar_ros"  type="ydlidar_node" output="screen" respawn="false" >
+      <param name="port"         type="string" value="/dev/ydlidar"/>  <!-- LRFのデバイスファイルパス -->
+      <param name="baudrate"         type="int" value="512000"/>  
+      <param name="frame_id"     type="string" value="lrf_link"/>
+      <param name="resolution_fixed"    type="bool"   value="true"/>
+      <param name="auto_reconnect"    type="bool"   value="true"/>
+      <param name="reversion"    type="bool"   value="true"/>
+      <param name="angle_min"    type="double" value="-180" />  <!-- センサの正面を0度する視野角の指定（最小値） -->
+      <param name="angle_max"    type="double" value="180" />   <!-- センサの正面を0度する視野角の指定（最大値） -->
+      <param name="range_min"    type="double" value="0.01" />
+      <param name="range_max"    type="double" value="32.0" />
+      <param name="ignore_array" type="string" value="" />
+      <param name="frequency"    type="double" value="10"/>
+      <param name="samp_rate"    type="int"    value="20"/>
+      <param name="isTOFLidar"    type="bool"   value="true"/>
+    </node>
+
+  </group>
+
+  <!-- gmapping -->
+  <node pkg="gmapping" type="slam_gmapping" name="mapper">
+    <param name="maxUrange" value="32.0" type="double" />
+    <param name="delta" value="0.05" />
+    <param name="xmax" value="30" type="double" />
+    <param name="ymax" value="30" type="double" />
+    <param name="xmin" value="-30" type="double" />
+    <param name="ymin" value="-30" type="double" />
+  </node>
+
+  <!-- rviz(視覚化ツール) -->
+  <node pkg="rviz" type="rviz" args="-d '$(find megarover3_ros)/configuration_files/rviz/gmapping.rviz'" name="visualizer" respawn="true" />
+</launch>
