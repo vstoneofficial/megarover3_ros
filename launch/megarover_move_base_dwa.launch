@@ -12,8 +12,6 @@
   <!-- オドメトリの配信ノード -->
   <node pkg="megarover3_ros" type="pub_odom" name="pub_odom" />
 
-  <!-- メガローバーの回転中心からLRFまでの座標変換 -->
-  <node pkg="tf" type="static_transform_publisher" name="stp_laser" args="0.1 0 0.08 3.14159 3.14159 0 base_link lrf_link 1" />
 
   <!-- URG-04LX-UG01の場合 -->
   <group if="$(eval lrf=='urg')">
