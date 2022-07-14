@@ -8,7 +8,7 @@ global_costmap:
 
   # 各TFフレーム名の設定
   global_frame: map
-  robot_base_frame: base_link
+  robot_base_frame: base_footprint
 
   #inflation_layerの設定
   inflation_layer:

@@ -11,8 +11,9 @@ SLAM（gmapping）サンプルのlaunch
 <launch>
 
   <!-- 引数 -->
-  <arg name="rover_type"  default="mega3"  doc="mega3 / outdoor" />
+  <arg name="rover_type"  default="mega3"  doc="mega3 / outdoor / f120a" />
   <arg name="lrf"         default="tg30"       doc="urg / tg30"/>
+  <arg name="rviz"        default="on"     doc="on / off"/>
 
   <!-- オドメトリの配信ノード -->
   <node pkg="megarover3_ros" type="pub_odom" name="pub_odom" />
@@ -48,17 +49,21 @@ SLAM（gmapping）サンプルのlaunch
     <group if="$(eval rover_type=='mega3')">
 　　  <!-- メガローバーVer3.0の場合 -->
       <!-- argsの項でLRFの位置を調整できます。 args="x y z y p r" -->
-      <node pkg="tf" type="static_transform_publisher" name="stp_laser" args="0.12 0 0.08 0 0 0 base_link lrf_link 1" />
+      <node pkg="tf" type="static_transform_publisher" name="stp_laser" args="0.12 0 0.15 0 0 0 base_footprint lrf_link 1" />
     </group>
     <group if="$(eval rover_type=='outdoor')">
       <!-- メガローバーVer.3.0屋外対応版の場合 -->
-      <node pkg="tf" type="static_transform_publisher" name="stp_laser" args="0.15 0 0.10 0 0 0 base_link lrf_link 1" />
+      <node pkg="tf" type="static_transform_publisher" name="stp_laser" args="0.15 0 0.10 0 0 0 base_footprint lrf_link 1" />
+    </group>
+    <group if="$(eval rover_type=='f120a')">
+　　  <!-- メガローバーF120Aの場合 -->
+      <node pkg="tf" type="static_transform_publisher" name="stp_laser" args="0.09 0 0.21 0 0 0 base_footprint lrf_link 1" />
     </group>
 
     <!-- YDLiDARデバイスドライバノード-->
     <node name="ydlidar_lidar_publisher"  pkg="ydlidar_ros_driver"  type="ydlidar_ros_driver_node" output="screen" respawn="false" >
       <!-- string property -->
-      <param name="port"         type="string" value="/dev/ydlidar"/>  
+      <param name="port"         type="string" value="/dev/ttyUSB2"/> <!-- LRFのデバイスファイルパスを設定してください -->  
       <param name="frame_id"     type="string" value="lrf_link"/>
       <param name="ignore_array"     type="string" value=""/>
 
@@ -103,5 +108,7 @@ SLAM（gmapping）サンプルのlaunch
   </node>
 
   <!-- rviz(視覚化ツール) -->
-  <node pkg="rviz" type="rviz" args="-d '$(find megarover3_ros)/configuration_files/rviz/gmapping.rviz'" name="visualizer" respawn="true" />
+  <group if="$(eval rviz=='on')">
+    <node pkg="rviz" type="rviz" args="-d '$(find megarover3_ros)/configuration_files/rviz/gmapping.rviz'" name="visualizer" respawn="true" />
+  </group>
 </launch>

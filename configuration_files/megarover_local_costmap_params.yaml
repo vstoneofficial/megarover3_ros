@@ -7,7 +7,7 @@ local_costmap:
 
   # 各TFフレームの設定
   global_frame: odom
-  robot_base_frame: base_link
+  robot_base_frame: base_footprint
 
   #inflation_layerの設定
   inflation_layer:
