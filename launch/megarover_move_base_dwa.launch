@@ -59,7 +59,7 @@
     <!-- YDLiDARデバイスドライバノード-->
     <node name="ydlidar_lidar_publisher"  pkg="ydlidar_ros_driver"  type="ydlidar_ros_driver_node" output="screen" respawn="false" >
       <!-- string property -->
-      <param name="port"         type="string" value="/dev/ttyUSB2"/> <!-- LRFのデバイスファイルパスを設定してください -->
+      <param name="port"         type="string" value="/dev/ydlidar"/> <!-- LRFのデバイスファイルパスを設定してください -->
       <param name="frame_id"     type="string" value="lrf_link"/>
       <param name="ignore_array"     type="string" value=""/>
 

@@ -102,7 +102,7 @@ Visualization Manager:
       Length: 0.2
       Name: BaseAxes
       Radius: 0.01
-      Reference Frame: base_link
+      Reference Frame: base_footprint
       Value: true
     - Arrow Length: 0.1
       Class: rviz/PoseArray
@@ -237,7 +237,7 @@ Visualization Manager:
       Name: Current View
       Near Clip Distance: 0.01
       Scale: 57.9067
-      Target Frame: base_link
+      Target Frame: base_footprint
       Value: TopDownOrtho (rviz)
       X: 0
       Y: 0
