@@ -23,11 +23,11 @@
     <group if="$(eval rover_type=='mega3')">
 　　  <!-- メガローバーVer.3.0の場合 -->
       <!-- argsの項でLRFの位置を調整できます。 args="x y z y p r" -->
-      <node pkg="tf" type="static_transform_publisher" name="stp_laser" args="0.1 0 0.08 0 0 3.14159 base_link lrf_link 1" />
+      <node pkg="tf" type="static_transform_publisher" name="stp_laser" args="0.1 0 0.08 0 0 3.14159 base_footprint lrf_link 1" />
     </group>
     <group if="$(eval rover_type=='outdoor')">
       <!-- メガローバーVer.3.0屋外対応版の場合 -->
-      <node pkg="tf" type="static_transform_publisher" name="stp_laser" args="0.13 0 0.10 0 0 0 base_link lrf_link 1" />
+      <node pkg="tf" type="static_transform_publisher" name="stp_laser" args="0.13 0 0.10 0 0 0 base_footprint lrf_link 1" />
     </group>
 
 　　<!-- LRFのデバイスドライバノード -->
